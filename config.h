@@ -1,4 +1,4 @@
-// TSDAMPIES --- DWM CONFIGURATION FILE ---
+// TRENTONSETHDAMPIES --- DWM CONFIGURATION FILE ---
 /*
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
@@ -18,7 +18,7 @@ EndSection
 /etc/systemd/system/getty@tty1.service.d/override.conf
 [Service]
 ExecStart=
-ExecStart=-/usr/bin/agetty --autologin username --noclear %I $TERM
+ExecStart=-/usr/bin/agetty --autologin !!username!! --noclear %I $TERM
 
 
 //Auto startx 
@@ -27,6 +27,14 @@ if [[ -z "$DISPLAY" ]] && [[ $(tty) = /dev/tty1 ]]; then
 . startx
 logout
 fi
+
+OR
+~/.profile
+if [ -z $DISPLAY ] && [ $(tty) = /dev/tty1 ]; then
+	startx
+fi	
+
+
 
 
 xset dpms 900 900 900
@@ -53,7 +61,6 @@ ignoreip = 127.0.0.1/8 ::1
 bantime = 3600
 findtime = 600
 maxretry = 5
-
 [sshd]
 enabled = true
 
@@ -64,8 +71,8 @@ sudo systemctl start fail2ban
 /etc/default/tlp
 WIFI_PWR_ON_AC=off
 WIFI_PWR_ON_BAT=off
-
 */
+
 #include <X11/XF86keysym.h>
 
 /* appearance */
@@ -110,7 +117,7 @@ static const Layout layouts[] = {
 	/* symbol     arrange function */
 	{ "[]",      monocle },    /* first entry is default */
 	{ "<>",      NULL },    /* no layout function means floating behavior */
-	{ "|=|",      tile },
+	{ "|-|",      tile },
 };
 
 /* key definitions */
@@ -137,16 +144,28 @@ static const char *brightnessdown[] =	{ "brightnessctl", "set", "10%-", NULL };
 static const char *filemanager[] = 	{ "thunar" , NULL };
 static const char *suspend[] = 	{ "alacritty", "-e", "sudo", "systemctl", "suspend", NULL };
 static const char *reboot[] = 	{ "alacritty", "-e", "sudo", "reboot", "now", NULL };
-static const char *shutdown[] = 	{ "alacritty", "-e", "sudo", "systemctl", "poweroff", NULL };
+static const char *shutdown[] = { "alacritty", "-e", "sudo", "systemctl", "poweroff", NULL };
+static const char *stsuspend[] = 	{ "st", "-e", "sudo", "systemctl", "suspend", NULL };
+static const char *streboot[] = 	{ "st", "-e", "sudo", "reboot", "now", NULL };
+static const char *stshutdown[] = 	{ "st", "-e", "sudo", "systemctl", "poweroff", NULL };
+
 
 
 
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
-	{ MODKEY,                       XK_y,      spawn,          {.v = dmenucmd } },
+	{ MODKEY,			XK_e,      spawn,	{.v = filemanager } },
+	{ Mod4Mask,			XK_e,      spawn,	{.v = filemanager } },
+	{ MODKEY,	  		XK_r,	   spawn,	SHCMD("j4-dmenu-desktop") },
+	{ Mod4Mask,	  		XK_r,	   spawn,	SHCMD("j4-dmenu-desktop") },
 	{ MODKEY,	                XK_t,      spawn,          {.v = termcmd } },
-	{ ControlMask,                     XK_space,  togglebar,      {0} },
+	{ Mod4Mask,	                XK_t,      spawn,          {.v = termcmd } },
+	{ MODKEY,                       XK_y,      spawn,          {.v = dmenucmd } },
+	{ Mod4Mask,                     XK_y,      spawn,          {.v = dmenucmd } },
+	{ ControlMask,                  XK_space,  togglebar,      {0} },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,	   {.v = st } },
+	{ Mod4Mask,                   XK_a,      focusstack,     {.i = +1 } },
+	{ Mod4Mask,                   XK_s,      focusstack,     {.i = +1 } },
 	{ MODKEY,                     XK_z,      focusstack,     {.i = +1 } },
 	{ MODKEY,                     XK_x,      focusstack,     {.i = -1 } },
 	{ MODKEY,			XK_j,      incnmaster,     {.i = +1 } },
@@ -156,9 +175,10 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_9,      view,           {0} },
 	{ MODKEY,	                XK_c,      killclient,     {0} },
+	{ Mod4Mask,	                XK_c,      killclient,     {0} },
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_v,      setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                       XK_b,      setlayout,      {.v = &layouts[2]} },
+	{ MODKEY,                       XK_b,      setlayout,      {.v = &layouts[1]} },
+	{ MODKEY,                       XK_v,      setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
@@ -171,12 +191,12 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_2,                        1)
 	TAGKEYS(                        XK_3,                        2)
 	{ MODKEY|ShiftMask,             XK_o,      quit,           {0} },
-	{ MODKEY,			XK_e,	spawn,	{.v = filemanager } },
 	{ MODKEY|ShiftMask,    		XK_g,	spawn,		{.v = suspend } },
 	{ MODKEY|ShiftMask,		XK_u,	spawn,          {.v = reboot } },
 	{ MODKEY|ShiftMask,  		XK_n,	spawn,		{.v = shutdown } },
-	{ MODKEY,	  		XK_p,	spawn,		SHCMD("xrandr --auto")},
-	{ MODKEY,	  		XK_r,	spawn,		SHCMD("j4-dmenu-desktop") },
+	{ Mod4Mask|ShiftMask,    	XK_g,	spawn,		{.v = stsuspend } },
+	{ Mod4Mask|ShiftMask,		XK_u,	spawn,          {.v = streboot } },
+	{ Mod4Mask|ShiftMask,  		XK_n,	spawn,		{.v = stshutdown } },
 	{ MODKEY|ControlMask,		XK_q,	spawn,		SHCMD("redshift -P -O 4600") },
 	{ MODKEY,			XK_q,	spawn,		SHCMD("redshift -P -O 3600") },
 	{ MODKEY|ControlMask,		XK_w,	spawn,		SHCMD("vibrant-cli eDP-1 1") },
@@ -186,6 +206,12 @@ static const Key keys[] = {
 	{ 0,				XF86XK_AudioMute, 		spawn,	{.v = volumemute } },
 	{ 0, 				XF86XK_MonBrightnessUp, 	spawn,	{.v = brightnessup } },
     	{ 0,				XF86XK_MonBrightnessDown,	spawn,	{.v = brightnessdown } },
+	{ MODKEY|ShiftMask,		XK_F6, 			spawn,	{.v = volumeup } },
+	{ MODKEY|ShiftMask,		XK_F5, 			spawn,	{.v = volumedown } },
+	{ MODKEY|ShiftMask,		XK_F4, 			spawn,	{.v = volumemute } },
+	{ MODKEY|ShiftMask,		XK_F2, 			spawn,	{.v = brightnessup } },
+    	{ MODKEY|ShiftMask,		XK_F1,			spawn,	{.v = brightnessdown } },
+
 
 };
 
