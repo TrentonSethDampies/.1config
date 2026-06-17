@@ -4,4 +4,11 @@ vibrant-cli eDP-1 0
 redshift -P -O 3600
 picom -b 
 ~/.fehbg &
+while true; do
+    BATT=$(cat /sys/class/power_supply/sbs-6-000b/capacity)
+    DATE=$(date +"%R")
+    xsetroot -name "${DATE} | ${BATT}% "
+    sleep 1m
+done &
+
 exec dwm
