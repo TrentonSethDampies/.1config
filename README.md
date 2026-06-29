@@ -1,2 +1,2 @@
 # .config
-My DWM, Picom, Xinitrc and other configuration files.
+Configuration Files for my Linux PCs
