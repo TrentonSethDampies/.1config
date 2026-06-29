@@ -142,40 +142,34 @@ static const char *volumemute[]    = { "/usr/bin/amixerl", "set", "Master", "tog
 static const char *brightnessup[] =	{ "brightnessctl", "set", "10%+", NULL };
 static const char *brightnessdown[] =	{ "brightnessctl", "set", "10%-", NULL };
 static const char *filemanager[] = 	{ "thunar" , NULL };
-static const char *suspend[] = 	{ "alacritty", "-e", "sudo", "systemctl", "suspend", NULL };
+static const char *hibernate[] = 	{ "alacritty", "-e", "systemctl", "hibernate", NULL };
+static const char *suspend[] = 	{ "alacritty", "-e", "systemctl", "suspend", NULL };
 static const char *reboot[] = 	{ "alacritty", "-e", "sudo", "reboot", "now", NULL };
 static const char *shutdown[] = { "alacritty", "-e", "sudo", "systemctl", "poweroff", NULL };
-static const char *stsuspend[] = 	{ "st", "-e", "sudo", "systemctl", "suspend", NULL };
-static const char *streboot[] = 	{ "st", "-e", "sudo", "reboot", "now", NULL };
-static const char *stshutdown[] = 	{ "st", "-e", "sudo", "systemctl", "poweroff", NULL };
-
 
 
 
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,			XK_e,      spawn,	{.v = filemanager } },
-	{ Mod4Mask,			XK_e,      spawn,	{.v = filemanager } },
 	{ MODKEY,	  		XK_r,	   spawn,	SHCMD("j4-dmenu-desktop") },
-	{ Mod4Mask,	  		XK_r,	   spawn,	SHCMD("j4-dmenu-desktop") },
 	{ MODKEY,	                XK_t,      spawn,          {.v = termcmd } },
-	{ Mod4Mask,	                XK_t,      spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_y,      spawn,          {.v = dmenucmd } },
-	{ Mod4Mask,                     XK_y,      spawn,          {.v = dmenucmd } },
 	{ ControlMask,                  XK_space,  togglebar,      {0} },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,	   {.v = st } },
-	{ Mod4Mask,                   XK_a,      focusstack,     {.i = +1 } },
-	{ Mod4Mask,                   XK_s,      focusstack,     {.i = +1 } },
 	{ MODKEY,                     XK_z,      focusstack,     {.i = +1 } },
 	{ MODKEY,                     XK_x,      focusstack,     {.i = -1 } },
-	{ MODKEY,			XK_j,      incnmaster,     {.i = +1 } },
-	{ MODKEY,			XK_k,      incnmaster,     {.i = -1 } },
-	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
-	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
+	{ MODKEY,	  		XK_i,	   spawn,	SHCMD("j4-dmenu-desktop") },
+	{ MODKEY,                     XK_comma,      focusstack,     {.i = +1 } },
+	{ MODKEY,                     XK_period,      focusstack,     {.i = +1 } },
+	{ MODKEY,			XK_7,      incnmaster,     {.i = +1 } },
+	{ MODKEY,			XK_8,      incnmaster,     {.i = -1 } },
+	{ MODKEY,                       XK_6,      setmfact,       {.f = -0.05} },
+	{ MODKEY,                       XK_5,      setmfact,       {.f = +0.05} },
 	{ MODKEY,                       XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_9,      view,           {0} },
 	{ MODKEY,	                XK_c,      killclient,     {0} },
-	{ Mod4Mask,	                XK_c,      killclient,     {0} },
+	{ MODKEY,	                XK_slash,  killclient,     {0} },
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_b,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_v,      setlayout,      {.v = &layouts[2]} },
@@ -183,20 +177,18 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
-	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
-	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
+	{ MODKEY,                       XK_bracketleft,  focusmon, {.i = -1 } },
+	{ MODKEY,                       XK_bracketright, focusmon, {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_bracketleft,  tagmon,   {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_bracketright, tagmon,   {.i = +1 } },
 	TAGKEYS(                        XK_1,                        0)
 	TAGKEYS(                        XK_2,                        1)
 	TAGKEYS(                        XK_3,                        2)
 	{ MODKEY|ShiftMask,             XK_o,      quit,           {0} },
-	{ MODKEY|ShiftMask,    		XK_g,	spawn,		{.v = suspend } },
+	{ MODKEY|ShiftMask,    		XK_h,	spawn,		{.v = hibernate } },
+	{ MODKEY|ShiftMask,    		XK_s,	spawn,		{.v = suspend } },
 	{ MODKEY|ShiftMask,		XK_u,	spawn,          {.v = reboot } },
 	{ MODKEY|ShiftMask,  		XK_n,	spawn,		{.v = shutdown } },
-	{ Mod4Mask|ShiftMask,    	XK_g,	spawn,		{.v = stsuspend } },
-	{ Mod4Mask|ShiftMask,		XK_u,	spawn,          {.v = streboot } },
-	{ Mod4Mask|ShiftMask,  		XK_n,	spawn,		{.v = stshutdown } },
 	{ MODKEY|ControlMask,		XK_q,	spawn,		SHCMD("redshift -P -O 4600") },
 	{ MODKEY,			XK_q,	spawn,		SHCMD("redshift -P -O 3600") },
 	{ MODKEY|ControlMask,		XK_w,	spawn,		SHCMD("vibrant-cli eDP-1 1") },
